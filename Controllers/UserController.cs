@@ -9,21 +9,40 @@ namespace ChatAppMini.Controllers;
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
-    private readonly AppDbContext _context;
-    public UsersController(AppDbContext context) => _context = context;
+    private readonly IUserService _userService;
+    public UsersController(IUserService userService) => _userService = userService;
 
     [HttpGet]
     public async Task<IActionResult> GetUsers()
     {
-        var users = await _context.Users.ToListAsync();
-        return Ok(new ApiResponse<List<User>>(200, "Fetched users", users));
+        var result = await _userService.GetUsersAsync();
+
+        try
+        {
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred while fetching users.", error = ex.Message });
+        }
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateUser(User user)
     {
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-        return Ok(new ApiResponse<User>(201, "User created", user));
+        if (user == null)
+        {
+            return BadRequest(new { message = "User data is required." });
+        }
+
+        try
+        {   
+            var result = await _userService.CreateUserAsync(user);
+            return CreatedAtAction(nameof(GetUsers), new { id = user.Id }, result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred while creating the user.", error = ex.Message });
+        }
     }
 }
