@@ -44,13 +44,22 @@ builder.Logging.AddConsole();
 var app = builder.Build();
 
 app.UseCors("CorsPolicy");
-app.UseOpenApi();
-app.UseSwaggerUi(config => {
-    config.DocumentTitle = "ChatApp Mini API";
-    config.Path = "/swagger";
-    config.DocumentPath = "/swagger/{documentName}/swagger.json";
-    config.DocExpansion = "list";
-});
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    app.UseOpenApi();
+    app.UseSwaggerUi(config => {
+        config.DocumentTitle = "ChatApp Mini API";
+        config.Path = "/swagger";
+        config.DocumentPath = "/swagger/{documentName}/swagger.json";
+        config.DocExpansion = "list";
+    });
+}
+else
+{
+    app.UseExceptionHandler("/error");
+    app.UseHsts();
+}
 
 app.MapControllers();
 app.MapHub<ChatHub>("/chathub");
