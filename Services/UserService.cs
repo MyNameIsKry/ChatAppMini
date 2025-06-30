@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 public interface IUserService
 {
     Task<ApiResponse<List<User>>> GetUsersAsync();
-    Task<ApiResponse<User>> CreateUserAsync(User user);
+    Task<ApiResponse<CreateUserDto>> CreateUserAsync(CreateUserDto user);
 }
 
 public class UserService : IUserService
@@ -24,11 +24,11 @@ public class UserService : IUserService
         return new ApiResponse<List<User>>(200, "Fetched users", users);
     }
 
-    public async Task<ApiResponse<User>> CreateUserAsync(User user)
+    public async Task<ApiResponse<CreateUserDto>> CreateUserAsync(CreateUserDto user)
     {
         await _repo.CreateUserAsync(user);
         await _repo.SaveChangesAsync();
 
-        return new ApiResponse<User>(201, "User created", user);
+        return new ApiResponse<CreateUserDto>(201, "User created", user);
     }
 }

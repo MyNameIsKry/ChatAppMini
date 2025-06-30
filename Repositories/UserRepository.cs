@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 public interface IUserRepository
 {
     Task<List<User>> GetUsersAsync();
-    Task CreateUserAsync(User user);
+    Task CreateUserAsync(CreateUserDto user);
     
     Task SaveChangesAsync();
 }
@@ -21,7 +21,14 @@ class UserRepository : IUserRepository
 
     public async Task<List<User>> GetUsersAsync() => await _context.Users.ToListAsync();
 
-    public async Task CreateUserAsync(User user) => await _context.Users.AddAsync(user);
+    public async Task CreateUserAsync(CreateUserDto user)
+    {
+        var newUser = new User
+        {
+            Name = user.Name
+        };
+        await _context.Users.AddAsync(newUser);
+    }
 
     public async Task SaveChangesAsync() => await _context.SaveChangesAsync();
 }

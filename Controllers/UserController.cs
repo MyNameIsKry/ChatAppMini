@@ -28,7 +28,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUser(User user)
+    public async Task<IActionResult> CreateUser(CreateUserDto user)
     {
         if (user == null)
         {
@@ -38,7 +38,7 @@ public class UsersController : ControllerBase
         try
         {   
             var result = await _userService.CreateUserAsync(user);
-            return CreatedAtAction(nameof(GetUsers), new { id = user.Id }, result);
+            return CreatedAtAction(nameof(GetUsers), result);
         }
         catch (Exception ex)
         {
