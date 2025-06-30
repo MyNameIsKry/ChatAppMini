@@ -6,6 +6,7 @@ public interface IUserService
 {
     Task<ApiResponse<List<User>>> GetUsersAsync();
     Task<ApiResponse<CreateUserDto>> CreateUserAsync(CreateUserDto user);
+    Task<ApiResponse<User?>> GetUsersByIdAsync(Guid id);
 }
 
 public class UserService : IUserService
@@ -30,5 +31,17 @@ public class UserService : IUserService
         await _repo.SaveChangesAsync();
 
         return new ApiResponse<CreateUserDto>(201, "User created", user);
+    }
+
+    public async Task<ApiResponse<User?>> GetUsersByIdAsync(Guid id)
+    {
+        User? user = await _repo.GetUsersByIdAsync(id);
+
+        if (user == null)
+        {
+            return new ApiResponse<User?>(404, "User not found", null);
+        }
+
+        return new ApiResponse<User?>(200, "User found", user);
     }
 }

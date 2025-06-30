@@ -27,6 +27,29 @@ public class UsersController : ControllerBase
         }
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetUserById(Guid id)
+    {
+        if (string.IsNullOrEmpty(id.ToString()))
+        {
+            return BadRequest(new { message = "User ID is required." });
+        }
+
+        try
+        {
+            var result = await _userService.GetUsersByIdAsync(id);
+            if (result.Data == null)
+            {
+                return NotFound(new { message = "User not found." });
+            }
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred while fetching the user.", error = ex.Message });
+        }
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateUser(CreateUserDto user)
     {
