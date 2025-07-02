@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ChatAppMini.Data;
 using ChatAppMini.Models;
+using ChatAppMini.Services;
 
 namespace ChatAppMini.Controllers;
 
@@ -13,59 +14,42 @@ public class UsersController : ControllerBase
     public UsersController(IUserService userService) => _userService = userService;
 
     [HttpGet]
-    public async Task<IActionResult> GetUsers()
+    public async Task<ApiResponse<List<User>>> GetUsers()
     {
         var result = await _userService.GetUsersAsync();
 
         try
         {
-            return Ok(result);
+            return new ApiResponse<List<User>>(200, "Fetched users", result);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "An error occurred while fetching users.", error = ex.Message });
+            Console.WriteLine(ex.Message);
+            return new ApiResponse<List<User>>(500, "An error occurred while fetching users", null);
         }
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetUserById(Guid id)
+    public async Task<ApiResponse<User>> GetUserById(Guid id)
     {
         if (string.IsNullOrEmpty(id.ToString()))
         {
-            return BadRequest(new { message = "User ID is required." });
+            return new ApiResponse<User>(400, "Invalid user ID", null);
         }
 
         try
         {
             var result = await _userService.GetUsersByIdAsync(id);
-            if (result.Data == null)
+            if (result == null)
             {
-                return NotFound(new { message = "User not found." });
+                return new ApiResponse<User>(404, "User not found", null);
             }
-            return Ok(result);
+            return new ApiResponse<User>(200, "User found", result);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "An error occurred while fetching the user.", error = ex.Message });
-        }
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> CreateUser(CreateUserDto user)
-    {
-        if (user == null)
-        {
-            return BadRequest(new { message = "User data is required." });
-        }
-
-        try
-        {   
-            var result = await _userService.CreateUserAsync(user);
-            return CreatedAtAction(nameof(GetUsers), result);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { message = "An error occurred while creating the user.", error = ex.Message });
+            Console.WriteLine(ex.Message);
+            return new ApiResponse<User>(500, $"An error occurred while fetching the user", null);
         }
     }
 }

@@ -2,11 +2,12 @@ using ChatAppMini.Models;
 using ChatAppMini.Data;
 using Microsoft.EntityFrameworkCore;
 
+namespace ChatAppMini.Services;
 public interface IUserService
 {
-    Task<ApiResponse<List<User>>> GetUsersAsync();
-    Task<ApiResponse<CreateUserDto>> CreateUserAsync(CreateUserDto user);
-    Task<ApiResponse<User?>> GetUsersByIdAsync(Guid id);
+    Task<List<User>> GetUsersAsync();
+    Task<CreateUserDto> CreateUserAsync(CreateUserDto user);
+    Task<User?> GetUsersByIdAsync(Guid id);
 }
 
 public class UserService : IUserService
@@ -18,30 +19,25 @@ public class UserService : IUserService
         _repo = repo;
     }
 
-    public async Task<ApiResponse<List<User>>> GetUsersAsync()
+    public async Task<List<User>> GetUsersAsync()
     {
         List<User> users = await _repo.GetUsersAsync();
 
-        return new ApiResponse<List<User>>(200, "Fetched users", users);
+        return users;
     }
 
-    public async Task<ApiResponse<CreateUserDto>> CreateUserAsync(CreateUserDto user)
+    public async Task<CreateUserDto> CreateUserAsync(CreateUserDto user)
     {
         await _repo.CreateUserAsync(user);
         await _repo.SaveChangesAsync();
 
-        return new ApiResponse<CreateUserDto>(201, "User created", user);
+        return user;
     }
 
-    public async Task<ApiResponse<User?>> GetUsersByIdAsync(Guid id)
+    public async Task<User?> GetUsersByIdAsync(Guid id)
     {
         User? user = await _repo.GetUsersByIdAsync(id);
 
-        if (user == null)
-        {
-            return new ApiResponse<User?>(404, "User not found", null);
-        }
-
-        return new ApiResponse<User?>(200, "User found", user);
+        return user;
     }
 }

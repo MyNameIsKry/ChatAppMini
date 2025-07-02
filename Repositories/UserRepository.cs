@@ -28,7 +28,9 @@ class UserRepository : IUserRepository
     {
         var newUser = new User
         {
-            Name = user.Name
+            Name = user.Name,
+            Email = user.Email,
+            Password = user.Password,
         };
         await _context.Users.AddAsync(newUser);
     }
