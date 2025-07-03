@@ -4,6 +4,7 @@ using ChatAppMini.Data;
 using ChatAppMini.Models;
 using ChatAppMini.Services;
 using Utils;
+using ChatAppMini.DTOs.User;
 
 namespace ChatAppMini.Controllers;
 
@@ -15,27 +16,27 @@ public class UsersController : ControllerBase
     public UsersController(IUserService userService) => _userService = userService;
 
     [HttpGet]
-    public async Task<ApiResponse<List<User>>> GetUsers()
+    public async Task<ApiResponse<List<ResponseUserDto>>> GetUsers()
     {
         var result = await _userService.GetUsersAsync();
 
         try
         {
-            return new ApiResponse<List<User>>(200, "Fetched users", result);
+            return new ApiResponse<List<ResponseUserDto>>(200, "Fetched users", result);
         }
         catch (Exception ex)
         {
             Logger.LogError($"Error fetching users: {ex.Message}", ex);
-            return new ApiResponse<List<User>>(500, "An error occurred while fetching users", null);
+            return new ApiResponse<List<ResponseUserDto>>(500, "An error occurred while fetching users", null);
         }
     }
 
     [HttpGet("{id}")]
-    public async Task<ApiResponse<User>> GetUserById(Guid id)
+    public async Task<ApiResponse<ResponseUserDto>> GetUserById(Guid id)
     {
         if (string.IsNullOrEmpty(id.ToString()))
         {
-            return new ApiResponse<User>(400, "Invalid user ID", null);
+            return new ApiResponse<ResponseUserDto>(400, "Invalid user ID", null);
         }
 
         try
@@ -43,14 +44,14 @@ public class UsersController : ControllerBase
             var result = await _userService.GetUsersByIdAsync(id);
             if (result == null)
             {
-                return new ApiResponse<User>(404, "User not found", null);
+                return new ApiResponse<ResponseUserDto>(404, "User not found", null);
             }
-            return new ApiResponse<User>(200, "User found", result);
+            return new ApiResponse<ResponseUserDto>(200, "User found", result);
         }
         catch (Exception ex)
         {
             Logger.LogError($"Error fetching user with ID {id}: {ex.Message}", ex);
-            return new ApiResponse<User>(500, $"An error occurred while fetching the user", null);
+            return new ApiResponse<ResponseUserDto>(500, $"An error occurred while fetching the user", null);
         }
     }
 }
