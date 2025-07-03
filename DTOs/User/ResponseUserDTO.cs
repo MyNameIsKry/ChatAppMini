@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 namespace ChatAppMini.DTOs.User;
 
 public class ResponseUserDto

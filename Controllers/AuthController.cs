@@ -17,22 +17,22 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ApiResponse<RequestUserDto>> Register(RequestUserDto userDto)
+    public async Task<ApiResponse<ResponseUserDto>> Register(RequestUserDto userDto)
     {
         if (userDto == null || string.IsNullOrEmpty(userDto.Name) || string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
         {
-            return new ApiResponse<RequestUserDto>(400, "Invalid user data provided.", null);
+            return new ApiResponse<ResponseUserDto>(400, "Invalid user data provided.", null);
         }
 
         try
         {
             var createdUser = await _userService.CreateUserAsync(userDto);
-            return new ApiResponse<RequestUserDto>(201, "User registered successfully.", createdUser);
+            return new ApiResponse<ResponseUserDto>(201, "User registered successfully.", createdUser);
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return new ApiResponse<RequestUserDto>(500, "An error occurred while registering the user.", null);
+            return new ApiResponse<ResponseUserDto>(500, "An error occurred while registering the user.", null);
         }
     }
 }

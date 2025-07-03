@@ -5,11 +5,11 @@ using ChatAppMini.DTOs.User;
 
 public interface IUserRepository
 {
-    Task<List<User>> GetUsersAsync();
+    Task<List<ResponseUserDto>> GetUsersAsync();
 
     Task CreateUserAsync(RequestUserDto user);
 
-    Task<User?> GetUsersByIdAsync(Guid id);
+    Task<ResponseUserDto?> GetUsersByIdAsync(Guid id);
     
     Task SaveChangesAsync();
 }
@@ -23,7 +23,16 @@ class UserRepository : IUserRepository
         _context = context;
     }
 
-    public async Task<List<User>> GetUsersAsync() => await _context.Users.ToListAsync();
+    public async Task<List<ResponseUserDto>> GetUsersAsync() =>
+        await _context.Users
+            .Select(u => new ResponseUserDto
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Email = u.Email
+                // Add other properties as needed
+            })
+            .ToListAsync();
 
     public async Task CreateUserAsync(RequestUserDto user)
     {
@@ -38,5 +47,16 @@ class UserRepository : IUserRepository
 
     public async Task SaveChangesAsync() => await _context.SaveChangesAsync();
 
-    public async Task<User?> GetUsersByIdAsync(Guid id) => await _context.Users.FindAsync(id);
+    public async Task<ResponseUserDto?> GetUsersByIdAsync(Guid id) =>
+        await _context.Users
+            .Where(u => u.Id == id)
+            .Select(u => new ResponseUserDto
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Email = u.Email,
+                CreatedAt = u.CreatedAt,
+                UpdatedAt = u.UpdatedAt
+            })
+            .FirstOrDefaultAsync();
 }

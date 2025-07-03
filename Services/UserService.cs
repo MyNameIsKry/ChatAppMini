@@ -7,9 +7,9 @@ namespace ChatAppMini.Services;
 
 public interface IUserService
 {
-    Task<List<User>> GetUsersAsync();
-    Task<RequestUserDto> CreateUserAsync(RequestUserDto user);
-    Task<User?> GetUsersByIdAsync(Guid id);
+    Task<List<ResponseUserDto>> GetUsersAsync();
+    Task<ResponseUserDto> CreateUserAsync(RequestUserDto user);
+    Task<ResponseUserDto?> GetUsersByIdAsync(Guid id);
 }
 
 public class UserService : IUserService
@@ -21,24 +21,30 @@ public class UserService : IUserService
         _repo = repo;
     }
 
-    public async Task<List<User>> GetUsersAsync()
+    public async Task<List<ResponseUserDto>> GetUsersAsync()
     {
-        List<User> users = await _repo.GetUsersAsync();
+        List<ResponseUserDto> users = await _repo.GetUsersAsync();
 
         return users;
     }
 
-    public async Task<RequestUserDto> CreateUserAsync(RequestUserDto user)
+    public async Task<ResponseUserDto> CreateUserAsync(RequestUserDto user)
     {
         await _repo.CreateUserAsync(user);
         await _repo.SaveChangesAsync();
 
-        return user;
+        ResponseUserDto responseUser = new ResponseUserDto
+        {
+            Name = user.Name,
+            Email = user.Email
+        };
+
+        return responseUser;
     }
 
-    public async Task<User?> GetUsersByIdAsync(Guid id)
+    public async Task<ResponseUserDto?> GetUsersByIdAsync(Guid id)
     {
-        User? user = await _repo.GetUsersByIdAsync(id);
+        ResponseUserDto? user = await _repo.GetUsersByIdAsync(id);
 
         return user;
     }
