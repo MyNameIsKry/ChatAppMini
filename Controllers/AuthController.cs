@@ -19,15 +19,16 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<ApiResponse<ResponseUserDto>> Register(RequestUserDto userDto)
     {
-        if (userDto == null || string.IsNullOrEmpty(userDto.Name) || string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
-        {
-            return new ApiResponse<ResponseUserDto>(400, "Invalid user data provided.", null);
-        }
-
         try
         {
-            var createdUser = await _userService.CreateUserAsync(userDto);
-            return new ApiResponse<ResponseUserDto>(201, "User registered successfully.", createdUser);
+            ServiceResult<ResponseUserDto> createdUser = await _userService.CreateUserAsync(userDto);
+
+            if (!createdUser.IsSuccess)
+            {
+                return new ApiResponse<ResponseUserDto>(400, createdUser.Message, null);
+            }
+
+            return new ApiResponse<ResponseUserDto>(201, "User registered successfully.", createdUser.Data);
         }
         catch (Exception ex)
         {

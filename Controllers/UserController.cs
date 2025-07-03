@@ -18,11 +18,11 @@ public class UsersController : ControllerBase
     [HttpGet]
     public async Task<ApiResponse<List<ResponseUserDto>>> GetUsers()
     {
-        var result = await _userService.GetUsersAsync();
+        ServiceResult<List<ResponseUserDto>> result = await _userService.GetUsersAsync();
 
         try
         {
-            return new ApiResponse<List<ResponseUserDto>>(200, "Fetched users", result);
+            return new ApiResponse<List<ResponseUserDto>>(200, "Fetched users", result.Data);
         }
         catch (Exception ex)
         {
@@ -34,19 +34,16 @@ public class UsersController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ApiResponse<ResponseUserDto>> GetUserById(Guid id)
     {
-        if (string.IsNullOrEmpty(id.ToString()))
-        {
-            return new ApiResponse<ResponseUserDto>(400, "Invalid user ID", null);
-        }
-
         try
         {
-            var result = await _userService.GetUsersByIdAsync(id);
-            if (result == null)
+            ServiceResult<ResponseUserDto> result = await _userService.GetUsersByIdAsync(id);
+
+            if (!result.IsSuccess)
             {
-                return new ApiResponse<ResponseUserDto>(404, "User not found", null);
+                return new ApiResponse<ResponseUserDto>(404, result.Message, null);
             }
-            return new ApiResponse<ResponseUserDto>(200, "User found", result);
+
+            return new ApiResponse<ResponseUserDto>(200, "User fetched successfully", result.Data);
         }
         catch (Exception ex)
         {
