@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ChatAppMini.Data;
 using ChatAppMini.Models;
 using ChatAppMini.Services;
+using Utils;
 
 namespace ChatAppMini.Controllers;
 
@@ -24,7 +25,7 @@ public class UsersController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            Logger.LogError($"Error fetching users: {ex.Message}", ex);
             return new ApiResponse<List<User>>(500, "An error occurred while fetching users", null);
         }
     }
@@ -48,7 +49,7 @@ public class UsersController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            Logger.LogError($"Error fetching user with ID {id}: {ex.Message}", ex);
             return new ApiResponse<User>(500, $"An error occurred while fetching the user", null);
         }
     }
