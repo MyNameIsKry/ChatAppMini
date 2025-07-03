@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ChatAppMini.Services;
+using ChatAppMini.DTOs.User;
+using Utils;
 
 namespace ChatAppMini.Controllers;
 

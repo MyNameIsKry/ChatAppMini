@@ -1,3 +1,4 @@
+namespace Utils;
 public class ApiResponse<T>
 {
     public int Status { get; set; }

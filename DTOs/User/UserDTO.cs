@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
+namespace ChatAppMini.DTOs.User;
 public class CreateUserDto
 {
     [Required]

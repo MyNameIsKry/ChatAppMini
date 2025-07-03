@@ -1,6 +1,7 @@
 using ChatAppMini.Models;
 using ChatAppMini.Data;
 using Microsoft.EntityFrameworkCore;
+using ChatAppMini.DTOs.User;
 
 public interface IUserRepository
 {
