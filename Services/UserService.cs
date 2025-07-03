@@ -8,7 +8,7 @@ namespace ChatAppMini.Services;
 public interface IUserService
 {
     Task<List<User>> GetUsersAsync();
-    Task<CreateUserDto> CreateUserAsync(CreateUserDto user);
+    Task<RequestUserDto> CreateUserAsync(RequestUserDto user);
     Task<User?> GetUsersByIdAsync(Guid id);
 }
 
@@ -28,7 +28,7 @@ public class UserService : IUserService
         return users;
     }
 
-    public async Task<CreateUserDto> CreateUserAsync(CreateUserDto user)
+    public async Task<RequestUserDto> CreateUserAsync(RequestUserDto user)
     {
         await _repo.CreateUserAsync(user);
         await _repo.SaveChangesAsync();

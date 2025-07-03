@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace ChatAppMini.DTOs.User;
-public class CreateUserDto
+public class RequestUserDto
 {
     [Required]
     [StringLength(30, MinimumLength = 3, ErrorMessage = "Name must be between 3 and 30 characters.")]

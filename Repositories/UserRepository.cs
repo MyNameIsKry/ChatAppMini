@@ -7,7 +7,7 @@ public interface IUserRepository
 {
     Task<List<User>> GetUsersAsync();
 
-    Task CreateUserAsync(CreateUserDto user);
+    Task CreateUserAsync(RequestUserDto user);
 
     Task<User?> GetUsersByIdAsync(Guid id);
     
@@ -25,7 +25,7 @@ class UserRepository : IUserRepository
 
     public async Task<List<User>> GetUsersAsync() => await _context.Users.ToListAsync();
 
-    public async Task CreateUserAsync(CreateUserDto user)
+    public async Task CreateUserAsync(RequestUserDto user)
     {
         var newUser = new User
         {
