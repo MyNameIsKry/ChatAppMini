@@ -53,13 +53,16 @@ public class UserService : IUserService
         string hashedPassword = HashPasswordUtil.HashPassword(user.Password);
         user.Password = hashedPassword;
         
-        await _repo.CreateUserAsync(user);
+        User newUser = await _repo.CreateUserAsync(user);
         await _repo.SaveChangesAsync();
 
         ResponseUserDto responseUser = new ResponseUserDto
         {
+            Id = newUser.Id,
             Name = user.Name,
-            Email = user.Email
+            Email = user.Email,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
         };
 
         return ServiceResult<ResponseUserDto>.Success(responseUser);

@@ -6,7 +6,7 @@ using ChatAppMini.DTOs.User;
 public interface IUserRepository
 {
     Task<List<ResponseUserDto>> GetUsersAsync();
-    Task CreateUserAsync(RequestUserDto user);
+    Task<User> CreateUserAsync(RequestUserDto user);
     Task<ResponseUserDto?> GetUsersByIdAsync(Guid id);
     Task SaveChangesAsync();
     Task<bool> UserExistsAsync(string email);
@@ -32,15 +32,18 @@ class UserRepository : IUserRepository
             })
             .ToListAsync();
 
-    public async Task CreateUserAsync(RequestUserDto user)
+    public async Task<User> CreateUserAsync(RequestUserDto user)
     {
         var newUser = new User
         {
+
             Name = user.Name,
             Email = user.Email,
             Password = user.Password,
         };
         await _context.Users.AddAsync(newUser);
+
+        return newUser;
     }
 
     public async Task SaveChangesAsync() => await _context.SaveChangesAsync();
