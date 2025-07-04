@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ChatAppMini.Services;
 using ChatAppMini.DTOs.User;
 using Utils;
+using ChatAppMini.DTOs.Auth;
 
 namespace ChatAppMini.Controllers;
 
@@ -10,10 +11,15 @@ namespace ChatAppMini.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IAuthService _authService;
 
-    public AuthController(IUserService userService)
+    public AuthController(
+        IUserService userService,
+        IAuthService authService
+    )
     {
         _userService = userService;
+        _authService = authService;
     }
 
     [HttpPost("register")]
@@ -32,8 +38,29 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
-            return new ApiResponse<ResponseUserDto>(500, "An error occurred while registering the user.", null);
+            Logger.LogError("An error occurred while registering the user.", ex);
+            return new ApiResponse<ResponseUserDto>(status: 500, "An error occurred while registering the user.", null);
+        }
+    }
+
+    [HttpPost("login")]
+    public async Task<ApiResponse<ResponseLoginDto>> Login(RequestLoginDto loginDto)
+    {
+        try
+        {
+            ServiceResult<ResponseLoginDto> loginResult = await _authService.LoginAsync(loginDto);
+
+            if (!loginResult.IsSuccess)
+            {
+                return new ApiResponse<ResponseLoginDto>(400, loginResult.Message, null);
+            }
+
+            return new ApiResponse<ResponseLoginDto>(200, "User logged in successfully.", loginResult.Data);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError("An error occurred while logging in.", ex);
+            return new ApiResponse<ResponseLoginDto>(500, "An error occurred while logging in.", null);
         }
     }
 }
