@@ -38,6 +38,7 @@ builder.Services.AddRouting(options =>
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
