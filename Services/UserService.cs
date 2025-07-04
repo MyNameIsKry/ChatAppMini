@@ -50,6 +50,9 @@ public class UserService : IUserService
             return ServiceResult<ResponseUserDto>.Fail("User with this email already exists.");
         }
 
+        string hashedPassword = HashPasswordUtil.HashPassword(user.Password);
+        user.Password = hashedPassword;
+        
         await _repo.CreateUserAsync(user);
         await _repo.SaveChangesAsync();
 

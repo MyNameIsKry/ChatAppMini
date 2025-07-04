@@ -10,6 +10,7 @@ public interface IUserRepository
     Task<ResponseUserDto?> GetUsersByIdAsync(Guid id);
     Task SaveChangesAsync();
     Task<bool> UserExistsAsync(string email);
+    Task<User?> GetUsersByEmailAsync(string email);
 }
 
 class UserRepository : IUserRepository
@@ -28,7 +29,6 @@ class UserRepository : IUserRepository
                 Id = u.Id,
                 Name = u.Name,
                 Email = u.Email
-                // Add other properties as needed
             })
             .ToListAsync();
 
@@ -62,4 +62,18 @@ class UserRepository : IUserRepository
     {
         return await _context.Users.AnyAsync(u => u.Email == email);
     }
+
+    public async Task<User?> GetUsersByEmailAsync(string email) =>
+        await _context.Users
+            .Where(u => u.Email == email)
+            .Select(u => new User
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Email = u.Email,
+                Password = u.Password,
+                CreatedAt = u.CreatedAt,
+                UpdatedAt = u.UpdatedAt
+            })
+            .FirstOrDefaultAsync();
 }
