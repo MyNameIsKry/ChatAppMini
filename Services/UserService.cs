@@ -45,6 +45,11 @@ public class UserService : IUserService
             return ServiceResult<ResponseUserDto>.Fail("Passwords do not match.");
         }
 
+        if (await _repo.UserExistsAsync(user.Email))
+        {
+            return ServiceResult<ResponseUserDto>.Fail("User with this email already exists.");
+        }
+
         await _repo.CreateUserAsync(user);
         await _repo.SaveChangesAsync();
 
