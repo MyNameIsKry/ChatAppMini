@@ -28,7 +28,9 @@ class UserRepository : IUserRepository
             {
                 Id = u.Id,
                 Name = u.Name,
-                Email = u.Email
+                Email = u.Email,
+                CreatedAt = u.CreatedAt,
+                UpdatedAt = u.UpdatedAt
             })
             .ToListAsync();
 
