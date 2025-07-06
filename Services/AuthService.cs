@@ -41,6 +41,8 @@ public class AuthService : IAuthService
             Id = existingUser.Id,
             Name = existingUser.Name,
             Email = existingUser.Email,
+            AccessToken = "test",
+            RefreshToken = "test",
             CreatedAt = existingUser.CreatedAt,
             UpdatedAt = existingUser.UpdatedAt
         };
