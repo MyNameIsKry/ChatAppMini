@@ -36,13 +36,17 @@ public class AuthService : IAuthService
             return ServiceResult<ResponseLoginDto>.Fail("Email or password is incorrect.");
         }
 
+        var jwtSettings = ProgramGlobals.JwtSettingsInstance;
+        string accessToken = GenerateTokenUtil.GenerateAccessToken(existingUser.Id.ToString(), existingUser.Email, jwtSettings);
+        string refreshToken = GenerateTokenUtil.GenerateRefreshToken();
+
         ResponseLoginDto responseLogin = new ResponseLoginDto
         {
             Id = existingUser.Id,
             Name = existingUser.Name,
             Email = existingUser.Email,
-            AccessToken = "test",
-            RefreshToken = "test",
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
             CreatedAt = existingUser.CreatedAt,
             UpdatedAt = existingUser.UpdatedAt
         };
