@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ChatAppMini.Data;
-using ChatAppMini.Models;
 using ChatAppMini.Services;
 using Utils;
 using ChatAppMini.DTOs.User;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatAppMini.Controllers;
 
@@ -48,6 +46,31 @@ public class UsersController : ControllerBase
         catch (Exception ex)
         {
             Logger.LogError($"Error fetching user with ID {id}: {ex.Message}", ex);
+            return new ApiResponse<ResponseUserDto>(500, $"An error occurred while fetching the user", null);
+        }
+    }
+
+    [HttpGet("@me")]
+    [Authorize]
+    public ApiResponse<ResponseUserDto> GetUserInfo()
+    {
+        try
+        {
+            if (!_userService.IsAuthenticated)
+                return new ApiResponse<ResponseUserDto>(401, "Unauthorized", null);
+
+            ResponseUserDto user = new ResponseUserDto
+            {
+                Id = _userService.UserId ?? Guid.Empty,
+                Name = _userService.Username ?? "",
+                Email = _userService.Email ?? "",
+            };
+
+            return new ApiResponse<ResponseUserDto>(200, "User Info", user);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"Error fetching user info {ex.Message}", ex);
             return new ApiResponse<ResponseUserDto>(500, $"An error occurred while fetching the user", null);
         }
     }

@@ -1,8 +1,7 @@
 using ChatAppMini.Models;
-using ChatAppMini.Data;
-using Microsoft.EntityFrameworkCore;
 using ChatAppMini.DTOs.User;
 using Utils;
+using System.Security.Claims;
 
 namespace ChatAppMini.Services;
 
@@ -11,16 +10,39 @@ public interface IUserService
     Task<ServiceResult<List<ResponseUserDto>>> GetUsersAsync();
     Task<ServiceResult<ResponseUserDto>> CreateUserAsync(RequestUserDto user);
     Task<ServiceResult<ResponseUserDto>> GetUsersByIdAsync(Guid id);
+    Guid? UserId { get; }
+    string? Username { get; }
+    string? Email { get; }
+    bool IsAuthenticated { get; }
 }
 
 public class UserService : IUserService
 {
     private readonly IUserRepository _repo;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public UserService(IUserRepository repo)
+    public UserService(
+        IUserRepository repo,
+        IHttpContextAccessor httpContextAccessor
+    )
     {
         _repo = repo;
+        _httpContextAccessor = httpContextAccessor;
     }
+
+    private ClaimsPrincipal? User => _httpContextAccessor.HttpContext?.User;
+
+    public Guid? UserId
+    {
+        get
+        {
+            var id = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return Guid.TryParse(id, out var guid) ? guid : (Guid?)null;
+        }
+    }
+    public string? Username => User?.FindFirst(ClaimTypes.Name)?.Value;
+    public string? Email => User?.FindFirst(ClaimTypes.Email)?.Value;
+    public bool IsAuthenticated => User?.Identity?.IsAuthenticated ?? false;
 
     public async Task<ServiceResult<List<ResponseUserDto>>> GetUsersAsync()
     {
@@ -30,7 +52,7 @@ public class UserService : IUserService
     }
 
     public async Task<ServiceResult<ResponseUserDto>> CreateUserAsync(RequestUserDto user)
-    {   
+    {
         if (user == null ||
             string.IsNullOrEmpty(user.Name) ||
             string.IsNullOrEmpty(user.Email) ||
@@ -52,7 +74,7 @@ public class UserService : IUserService
 
         string hashedPassword = HashPasswordUtil.HashPassword(user.Password);
         user.Password = hashedPassword;
-        
+
         User newUser = await _repo.CreateUserAsync(user);
         await _repo.SaveChangesAsync();
 
@@ -72,8 +94,8 @@ public class UserService : IUserService
     {
         ResponseUserDto? user = await _repo.GetUsersByIdAsync(id);
 
-        return user != null 
-            ? ServiceResult<ResponseUserDto>.Success(user) 
+        return user != null
+            ? ServiceResult<ResponseUserDto>.Success(user)
             : ServiceResult<ResponseUserDto>.Fail("User not found.");
     }
 }

@@ -37,7 +37,7 @@ public class AuthService : IAuthService
         }
 
         var jwtSettings = ProgramGlobals.JwtSettingsInstance;
-        string accessToken = GenerateTokenUtil.GenerateAccessToken(existingUser.Id.ToString(), existingUser.Email, jwtSettings);
+        string accessToken = GenerateTokenUtil.GenerateAccessToken(existingUser.Id.ToString(), existingUser.Email, existingUser.Name, jwtSettings);
         string refreshToken = GenerateTokenUtil.GenerateRefreshToken();
 
         ResponseLoginDto responseLogin = new ResponseLoginDto
