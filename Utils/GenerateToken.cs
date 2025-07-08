@@ -10,7 +10,7 @@ namespace Utils
 {
     public static class GenerateTokenUtil
     {
-        public static string GenerateAccessToken(string userId, string userEmail, JwtSettings jwtSettings)
+        public static string GenerateAccessToken(string userId, string userEmail, string userName, JwtSettings jwtSettings)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(jwtSettings.Key);
@@ -24,6 +24,7 @@ namespace Utils
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, userId),
                     new Claim(JwtRegisteredClaimNames.Email, userEmail),
+                    new Claim(JwtRegisteredClaimNames.Name, userName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(jwtSettings.ExpiryMinutes),
