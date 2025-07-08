@@ -40,7 +40,7 @@ public class UserService : IUserService
             return Guid.TryParse(id, out var guid) ? guid : (Guid?)null;
         }
     }
-    public string? Username => User?.FindFirst(ClaimTypes.Name)?.Value;
+    public string? Username => User?.Identity?.Name;
     public string? Email => User?.FindFirst(ClaimTypes.Email)?.Value;
     public bool IsAuthenticated => User?.Identity?.IsAuthenticated ?? false;
 

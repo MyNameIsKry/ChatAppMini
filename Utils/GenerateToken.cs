@@ -25,6 +25,7 @@ namespace Utils
                     new Claim(JwtRegisteredClaimNames.Sub, userId),
                     new Claim(JwtRegisteredClaimNames.Email, userEmail),
                     new Claim(JwtRegisteredClaimNames.Name, userName),
+                    new Claim(ClaimTypes.Name, userName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(jwtSettings.ExpiryMinutes),
