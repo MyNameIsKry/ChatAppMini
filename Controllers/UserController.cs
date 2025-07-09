@@ -52,21 +52,16 @@ public class UsersController : ControllerBase
 
     [HttpGet("@me")]
     [Authorize]
-    public ApiResponse<ResponseUserDto> GetUserInfo()
+    public async Task<ApiResponse<ResponseUserDto>> GetUserInfo()
     {
         try
         {
             if (!_userService.IsAuthenticated)
                 return new ApiResponse<ResponseUserDto>(401, "Unauthorized", null);
 
-            ResponseUserDto user = new ResponseUserDto
-            {
-                Id = _userService.UserId ?? Guid.Empty,
-                Name = _userService.Username ?? "",
-                Email = _userService.Email ?? "",
-            };
+            ServiceResult<ResponseUserDto> user = await _userService.GetUsersByIdAsync(_userService.UserId ?? Guid.Empty);
 
-            return new ApiResponse<ResponseUserDto>(200, "User Info", user);
+            return new ApiResponse<ResponseUserDto>(200, "User Info", user.Data);
         }
         catch (Exception ex)
         {
