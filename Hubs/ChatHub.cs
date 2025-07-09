@@ -13,14 +13,24 @@ public class ChatHub : Hub
         string? userId = Context?.User?.Identity?.Name;
         Logger.Log($"Người dùng đã kết nối: {userId}");
 
-        await Clients.All.SendAsync("UserConnected", $"Người dùng {userId} đã kết nối");
+        await Clients.All.SendAsync("MessageSystem", $"{userId} đã tham gia phòng chat");
         await base.OnConnectedAsync();
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        string? userId = Context?.User?.Identity?.Name;
+        Logger.Log($"Người dùng đã rời đi: {userId}");
+
+        await Clients.All.SendAsync("MessageSystem", $"{userId} đã rời khỏi phòng chat");
+        await base.OnDisconnectedAsync(exception);
     }
 
     public async Task SendMessage(string message)
     {
-        string? username = Context?.User?.Identity?.Name;
+        string? sender = Context.User?.Identity?.Name;
+        string logMessage = $"{sender}: {message}";
 
-        await Clients.All.SendAsync("ReceiveMessage", username, message);
+        await Clients.All.SendAsync("MessageSystem", logMessage);
     }
 }
