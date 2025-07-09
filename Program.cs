@@ -17,7 +17,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy", policy =>
     {
         policy
-            .WithOrigins("http://localhost:3000")
+            //.WithOrigins("http://localhost:5500")
+            .SetIsOriginAllowed(_ => true)
             .AllowCredentials()
             .AllowAnyMethod()
             .AllowAnyHeader();
@@ -75,7 +76,6 @@ builder.Services.AddAuthentication("Bearer")
                 if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chatHub"))
                 {
                     context.Token = accessToken;
-                    Console.WriteLine($">>> CONTEXT: {context.Token}");
                 }
 
                 return Task.CompletedTask;
