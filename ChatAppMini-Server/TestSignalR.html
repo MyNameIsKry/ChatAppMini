@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SignalR Chat Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+</head>
+<body>
+    <h2>🔧 SignalR Chat Test</h2>
+    <label>Token:</label>
+    <input id="tokenInput" placeholder="Enter token" />
+    <br>
+    <br>
+    <label>Message:</label>
+    <input id="messageInput" placeholder="Enter your message" />
+    <button onclick="sendMessage()">Send</button>
+
+    <button onclick="startConnection()">Connect to SignalR</button>
+    <hr />
+    <div id="chatBox" style="border: 1px solid gray; padding: 10px;"></div>
+
+    <script>
+        let connection;
+
+        async function startConnection() {
+            const token = document.getElementById("tokenInput").value;
+
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl(`http://localhost:5189/chathub?access_token=${token}`)
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            connection.on("MessageSystem", (message) => {
+                const msgDiv = document.createElement("div");
+                msgDiv.innerText = `${message}`;
+                document.getElementById("chatBox").appendChild(msgDiv);
+            });
+
+            try {
+                await connection.start();
+                console.log("✅ Connected to SignalR Hub");
+            } catch (err) {
+                console.error("❌ Connection failed:", err);
+            }
+        }
+
+        function sendMessage() {
+            const message = document.getElementById("messageInput").value;
+
+            if (!message) {
+                alert("Please enter both name and message!");
+                return;
+            }
+
+            connection.invoke("SendMessage", message).catch(err => {
+                console.error("❌ Failed to send:", err);
+            });
+        }
+    </script>
+</body>
+</html>
