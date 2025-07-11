@@ -1,8 +1,8 @@
 public class Message {
     public int Id { get; set; }
-    public string SenderId { get; set; }
+    public Guid SenderId { get; set; }
 
-    public string? ReceiverId { get; set; }
+    public Guid? ReceiverId { get; set; }
 
     public string? GroupId { get; set; }
 
