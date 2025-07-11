@@ -5,6 +5,7 @@ namespace ChatAppMini.Data;
 
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> opts) : base(opts) {}
+    public AppDbContext(DbContextOptions<AppDbContext> opts) : base(opts) { }
     public DbSet<User> Users => Set<User>();
+    public DbSet<Message> Messages => Set<Message>();
 }
