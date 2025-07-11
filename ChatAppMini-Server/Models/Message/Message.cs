@@ -1,5 +1,8 @@
+using System.ComponentModel.DataAnnotations;
+
 public class Message {
-    public int Id { get; set; }
+    [Key]
+    public Guid Id { get; set; } = Guid.NewGuid();
     public Guid SenderId { get; set; }
 
     public Guid? ReceiverId { get; set; }
