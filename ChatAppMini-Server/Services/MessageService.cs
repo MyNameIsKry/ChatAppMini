@@ -13,12 +13,12 @@ public interface IMessageService
 
 public class MessageService : IMessageService
 {
-    private readonly MessageRepository _repo;
+    private readonly IMessageRepository _repo;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private ClaimsPrincipal? User => _httpContextAccessor.HttpContext?.User;
 
     public MessageService(
-        MessageRepository repo,
+        IMessageRepository repo,
         IHttpContextAccessor httpContextAccessor
     )
     {
