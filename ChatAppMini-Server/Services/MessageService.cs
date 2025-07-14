@@ -32,7 +32,7 @@ public class MessageService : IMessageService
             return ServiceResult<Message>.Fail("Content must not empty");
 
         Message message = await _repo.SaveUsersMessages(msg);
-
+        await _repo.SaveChangesAsync();
         return ServiceResult<Message>.Success(message);
     }
 

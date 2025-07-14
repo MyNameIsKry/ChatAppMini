@@ -35,6 +35,7 @@ public class MessageController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<ApiResponse<List<Message>>> GetUsersMessages(Guid id)
     {
         try
