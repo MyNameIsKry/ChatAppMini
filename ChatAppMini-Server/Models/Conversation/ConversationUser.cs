@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using ChatAppMini.Models;
 using Microsoft.EntityFrameworkCore;
 
 public class ConversationUser

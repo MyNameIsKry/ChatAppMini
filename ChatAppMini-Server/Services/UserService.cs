@@ -1,4 +1,3 @@
-using ChatAppMini.Models;
 using ChatAppMini.DTOs.User;
 using Utils;
 using System.Security.Claims;

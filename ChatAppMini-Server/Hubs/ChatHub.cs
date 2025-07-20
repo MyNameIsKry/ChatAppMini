@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.SignalR;
-using ChatAppMini.Models;
 using Utils;
 using Microsoft.AspNetCore.Authorization;
 

@@ -1,7 +1,5 @@
-using ChatAppMini.DTOs.User;
 using Utils;
 using ChatAppMini.DTOs.Auth;
-using ChatAppMini.Models;
 
 public interface IAuthService
 {

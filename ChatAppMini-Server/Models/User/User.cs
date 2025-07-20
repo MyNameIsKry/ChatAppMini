@@ -1,7 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ChatAppMini.Models;
-
 public class User
 {
     [Key]
