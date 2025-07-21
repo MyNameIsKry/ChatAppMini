@@ -29,6 +29,7 @@ public class UsersController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<ApiResponse<ResponseUserDto>> GetUserById(Guid id)
     {
