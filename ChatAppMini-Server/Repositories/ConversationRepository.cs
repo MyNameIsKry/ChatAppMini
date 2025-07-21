@@ -25,8 +25,18 @@ public class ConversationRepository : IConversationRepository
             .Select(c => new ResponseConversationDTO
             {
                 Id = c.Id,
-                Messages = c.Messages,
-                Participants = c.Participants
+                Messages = c.Messages.Select(msg => new ResponseMessageDTO
+                {
+                    Id = msg.Id,
+                    Content = msg.Content,
+                    SenderId = msg.SenderId,
+                    SentAt = msg.SentAt
+                }).ToList(),
+                Participants = c.Participants.Select(u => new ResponseParticipantDTO
+                {
+                    UserId = u.UserId,
+                    Username = u.User.Name,
+                }).ToList()
             })
             .FirstOrDefaultAsync(); 
     
