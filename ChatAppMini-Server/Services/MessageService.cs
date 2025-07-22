@@ -1,4 +1,3 @@
-using ChatAppMini.Models;
 using ChatAppMini.DTOs.User;
 using Utils;
 using System.Security.Claims;
@@ -7,8 +6,7 @@ namespace ChatAppMini.Services;
 
 public interface IMessageService
 {
-    Task<ServiceResult<Message>> SaveUsersMessages(RequestMessageDTO msg);
-    Task<ServiceResult<List<Message>>> GetUsersMessages(Guid withUser);
+    Task<ServiceResult<ResponseMessageDTO>> SendMessageAsync(RequestMessageDTO messageDto, Guid conversationId);
 }
 
 public class MessageService : IMessageService
@@ -26,28 +24,30 @@ public class MessageService : IMessageService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<ServiceResult<Message>> SaveUsersMessages(RequestMessageDTO msg)
+    public async Task<ServiceResult<ResponseMessageDTO>> SendMessageAsync(RequestMessageDTO messageDto, Guid conversationId)
     {
-        if (msg.Content.Length == 0)
-            return ServiceResult<Message>.Fail("Content must not empty");
+        if (User == null || User?.Identity?.IsAuthenticated != true)
+        {
+            return ServiceResult<ResponseMessageDTO>.Fail("User is not authenticated.");
+        }
 
-        Message message = await _repo.SaveUsersMessages(msg);
-        await _repo.SaveChangesAsync();
-        return ServiceResult<Message>.Success(message);
-    }
+        var senderId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-    public async Task<ServiceResult<List<Message>>> GetUsersMessages(Guid withUser)
-    {
-        var userId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var message = await _repo.SendMessageAsync(messageDto, conversationId);
+        
+        if (message == null)
+        {
+            return ServiceResult<ResponseMessageDTO>.Fail("Failed to send message.");
+        }
 
-        if (string.IsNullOrEmpty(userId))
-            return ServiceResult<List<Message>>.Fail("User Id empty!");
+        var responseMessage = new ResponseMessageDTO
+        {
+            Id = message.Id,
+            Content = message.Content,
+            SenderId = message.SenderId,
+            SentAt = message.SentAt
+        };
 
-        if (!Guid.TryParse(userId, out var guidUserId))
-            return ServiceResult<List<Message>>.Fail("Invalid User Id format!");
-
-        List<Message> listMessages = await _repo.GetUsersMessages(guidUserId, withUser);
-
-        return ServiceResult<List<Message>>.Success(listMessages);
+        return ServiceResult<ResponseMessageDTO>.Success(responseMessage);
     }
 }
