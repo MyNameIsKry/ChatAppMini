@@ -6,6 +6,7 @@ public interface IConversationRepository
 {
     Task SaveChangesAsync();
     Task<ResponseConversationDTO?> GetConversationAsync(Guid id);
+    Task<Conversation> CreateConversationAsync(Guid userId); // userid là của người mình muốn tạo cuộc trò chuyện
 }
 
 public class ConversationRepository : IConversationRepository
@@ -38,6 +39,32 @@ public class ConversationRepository : IConversationRepository
                     Username = u.User.Name,
                 }).ToList()
             })
-            .FirstOrDefaultAsync(); 
-    
+            .FirstOrDefaultAsync();
+
+    public async Task<Conversation> CreateConversationAsync(Guid userId)
+    {
+        var newConversationId = Guid.NewGuid();
+
+        ConversationUser participant = new ConversationUser
+        {
+            UserId = userId,
+            ConversationId = newConversationId
+        };
+
+        await _context.Conversations.AddAsync(new Conversation
+        {
+            Id = newConversationId,
+            Participants = new List<ConversationUser> { participant }
+        });
+
+        await _context.ConversationUsers.AddAsync(participant);
+
+        await SaveChangesAsync();
+
+        return new Conversation
+        {
+            Id = newConversationId,
+            Participants = new List<ConversationUser> { participant }
+        };
+    }
 }

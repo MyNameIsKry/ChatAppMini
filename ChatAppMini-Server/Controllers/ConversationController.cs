@@ -22,7 +22,19 @@ public class ConversationController : ControllerBase
 
         if (result.IsSuccess)
             return new ApiResponse<ResponseConversationDTO>(200, result.Message, result.Data);
-        
+
         return new ApiResponse<ResponseConversationDTO>(500, result.Message);
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<ApiResponse<Conversation>> CreateConversationAsync([FromBody] Guid userId)
+    {
+        ServiceResult<Conversation> result = await _conversationService.CreateConversationAsync(userId);
+
+        if (result.IsSuccess)
+            return new ApiResponse<Conversation>(201, result.Message, result.Data);
+
+        return new ApiResponse<Conversation>(500, result.Message);
     }
 }
