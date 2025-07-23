@@ -6,7 +6,7 @@ public interface IConversationRepository
 {
     Task SaveChangesAsync();
     Task<ResponseConversationDTO?> GetConversationAsync(Guid id);
-    Task<Conversation> CreateConversationAsync(Guid userId); // userid là của người mình muốn tạo cuộc trò chuyện
+    Task<ResponseConversationDTO> CreateConversationAsync(RequestConversationDTO requestConversation); // userid là của người mình muốn tạo cuộc trò chuyện
 }
 
 public class ConversationRepository : IConversationRepository
@@ -41,13 +41,14 @@ public class ConversationRepository : IConversationRepository
             })
             .FirstOrDefaultAsync();
 
-    public async Task<Conversation> CreateConversationAsync(Guid userId)
+    public async Task<ResponseConversationDTO> CreateConversationAsync(RequestConversationDTO requestConversation)
     {
         var newConversationId = Guid.NewGuid();
 
+        var participantUserId = requestConversation.Participants.First().UserId;
         ConversationUser participant = new ConversationUser
         {
-            UserId = userId,
+            UserId = participantUserId,
             ConversationId = newConversationId
         };
 
@@ -61,10 +62,17 @@ public class ConversationRepository : IConversationRepository
 
         await SaveChangesAsync();
 
-        return new Conversation
+        return new ResponseConversationDTO
         {
             Id = newConversationId,
-            Participants = new List<ConversationUser> { participant }
+            Participants = new List<ResponseParticipantDTO> 
+            {
+                new ResponseParticipantDTO 
+                { 
+                    UserId = participant.UserId, 
+                    Username = _context.Users.Find(participant.UserId)?.Name ?? "Unknown" 
+                } 
+            },
         };
     }
 }

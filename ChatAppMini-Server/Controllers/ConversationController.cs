@@ -28,13 +28,13 @@ public class ConversationController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<ApiResponse<Conversation>> CreateConversationAsync([FromBody] Guid userId)
+    public async Task<ApiResponse<ResponseConversationDTO>> CreateConversationAsync(RequestConversationDTO requestConversation)
     {
-        ServiceResult<Conversation> result = await _conversationService.CreateConversationAsync(userId);
+        ServiceResult<ResponseConversationDTO> result = await _conversationService.CreateConversationAsync(requestConversation);
 
         if (result.IsSuccess)
-            return new ApiResponse<Conversation>(201, result.Message, result.Data);
+            return new ApiResponse<ResponseConversationDTO>(201, result.Message, result.Data);
 
-        return new ApiResponse<Conversation>(500, result.Message);
+        return new ApiResponse<ResponseConversationDTO>(500, result.Message);
     }
 }

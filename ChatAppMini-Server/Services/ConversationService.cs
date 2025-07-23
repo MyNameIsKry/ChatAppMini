@@ -6,7 +6,7 @@ namespace ChatAppMini.Services.Conversations;
 public interface IConversationService
 {
     Task<ServiceResult<ResponseConversationDTO?>> GetConversationAsync(Guid id);
-    Task<ServiceResult<Conversation>> CreateConversationAsync(Guid userId);
+    Task<ServiceResult<ResponseConversationDTO>> CreateConversationAsync(RequestConversationDTO requestConversation);
 }
 
 public class ConversationService : IConversationService
@@ -28,18 +28,18 @@ public class ConversationService : IConversationService
         }
     }
 
-    public async Task<ServiceResult<Conversation>> CreateConversationAsync(Guid userId)
+    public async Task<ServiceResult<ResponseConversationDTO>> CreateConversationAsync(RequestConversationDTO requestConversation)
     {
         try
         {
-            var conversation = await _repo.CreateConversationAsync(userId);
+            var conversation = await _repo.CreateConversationAsync(requestConversation);
             await _repo.SaveChangesAsync();
-            return ServiceResult<Conversation>.Success(conversation);
+            return ServiceResult<ResponseConversationDTO>.Success(conversation);
         }
         catch (Exception ex)
         {
             Logger.LogError("Error while creating conversation", ex);
-            return ServiceResult<Conversation>.Fail("Error while creating conversation");
+            return ServiceResult<ResponseConversationDTO>.Fail("Error while creating conversation");
         }
     }
 }
