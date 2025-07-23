@@ -25,7 +25,7 @@ public class MessageController : ControllerBase
         ServiceResult<ResponseMessageDTO> result = await _messageService.SendMessageAsync(messageDto, conversationId);
 
         if (result.IsSuccess)
-            return new ApiResponse<ResponseMessageDTO>(200, result.Message, result.Data);
+            return new ApiResponse<ResponseMessageDTO>(201, result.Message, result.Data);
         
         return new ApiResponse<ResponseMessageDTO>(500, result.Message);
     }
