@@ -7,6 +7,7 @@ public interface IConversationRepository
     Task SaveChangesAsync();
     Task<ResponseConversationDTO?> GetConversationAsync(Guid id);
     Task<ResponseConversationDTO> CreateConversationAsync(RequestConversationDTO requestConversation); // userid là của người mình muốn tạo cuộc trò chuyện
+    Task<bool> IsConversationExistsAsync(Guid conversationId);
 }
 
 public class ConversationRepository : IConversationRepository
@@ -19,6 +20,9 @@ public class ConversationRepository : IConversationRepository
     }
 
     public async Task SaveChangesAsync() => await _context.SaveChangesAsync();
+
+    public async Task<bool> IsConversationExistsAsync(Guid conversationId) =>
+        await _context.Conversations.AnyAsync(c => c.Id == conversationId);
 
     public async Task<ResponseConversationDTO?> GetConversationAsync(Guid id) =>
         await _context.Conversations

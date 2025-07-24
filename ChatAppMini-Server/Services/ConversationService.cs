@@ -18,7 +18,12 @@ public class ConversationService : IConversationService
     public async Task<ServiceResult<ResponseConversationDTO?>> GetConversationAsync(Guid id)
     {
         try
-        {
+        {   
+            if (!await _repo.IsConversationExistsAsync(id))
+            {
+                return ServiceResult<ResponseConversationDTO?>.Fail("Conversation not found.");
+            }
+            
             return ServiceResult<ResponseConversationDTO?>.Success(await _repo.GetConversationAsync(id));
         }
         catch (Exception ex)

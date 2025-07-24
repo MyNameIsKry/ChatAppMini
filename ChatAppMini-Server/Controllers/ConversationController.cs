@@ -20,8 +20,11 @@ public class ConversationController : ControllerBase
     {
         ServiceResult<ResponseConversationDTO?> result = await _conversationService.GetConversationAsync(id);
 
-        if (result.IsSuccess)
+        if (result.IsSuccess && result.Data != null)
             return new ApiResponse<ResponseConversationDTO>(200, result.Message, result.Data);
+
+        if (result.Data == null)
+            return new ApiResponse<ResponseConversationDTO>(404, result.Message);
 
         return new ApiResponse<ResponseConversationDTO>(500, result.Message);
     }
