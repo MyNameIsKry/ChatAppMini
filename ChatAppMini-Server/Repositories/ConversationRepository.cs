@@ -6,8 +6,12 @@ public interface IConversationRepository
 {
     Task SaveChangesAsync();
     Task<ResponseConversationDTO?> GetConversationAsync(Guid id);
-    Task<ResponseConversationDTO> CreateConversationAsync(RequestConversationDTO requestConversation); // userid là của người mình muốn tạo cuộc trò chuyện
+    Task<ResponseConversationDTO> CreateConversationAsync(RequestConversationDTO requestConversation);
     Task<bool> IsConversationExistsAsync(Guid conversationId);
+    Task<List<ResponseConversationDTO>> GetUserConversationsAsync(Guid userId);
+    Task AddParticipantAsync(Guid conversationId, Guid participantId);
+    Task RemoveParticipantAsync(Guid conversationId, Guid participantId);
+    Task DeleteConversationAsync(Guid conversationId);
 }
 
 public class ConversationRepository : IConversationRepository
@@ -47,36 +51,96 @@ public class ConversationRepository : IConversationRepository
 
     public async Task<ResponseConversationDTO> CreateConversationAsync(RequestConversationDTO requestConversation)
     {
-        var newConversationId = Guid.NewGuid();
-
-        var participantUserId = requestConversation.Participants.First().UserId;
-        ConversationUser participant = new ConversationUser
+        var conversation = new Conversation
         {
-            UserId = participantUserId,
-            ConversationId = newConversationId
+            Id = Guid.NewGuid()
         };
 
-        await _context.Conversations.AddAsync(new Conversation
+        var participants = requestConversation.Participants.Select(p => new ConversationUser
         {
-            Id = newConversationId,
-            Participants = new List<ConversationUser> { participant }
-        });
+            ConversationId = conversation.Id,
+            UserId = p.UserId
+        }).ToList();
 
-        await _context.ConversationUsers.AddAsync(participant);
+        conversation.Participants = participants;
 
+        await _context.Conversations.AddAsync(conversation);
+        await _context.ConversationUsers.AddRangeAsync(participants);
         await SaveChangesAsync();
 
         return new ResponseConversationDTO
         {
-            Id = newConversationId,
-            Participants = new List<ResponseParticipantDTO> 
+            Id = conversation.Id,
+            Messages = new List<ResponseMessageDTO>(),
+            Participants = participants.Select(p => new ResponseParticipantDTO
             {
-                new ResponseParticipantDTO 
-                { 
-                    UserId = participant.UserId, 
-                    Username = _context.Users.Find(participant.UserId)?.Name ?? "Unknown" 
-                } 
-            },
+                UserId = p.UserId,
+                Username = _context.Users.Find(p.UserId)?.Name ?? "Unknown"
+            }).ToList()
         };
+    }
+
+    public async Task<List<ResponseConversationDTO>> GetUserConversationsAsync(Guid userId) =>
+        await _context.Conversations
+            .Where(c => c.Participants.Any(p => p.UserId == userId))
+            .Select(c => new ResponseConversationDTO
+            {
+                Id = c.Id,
+                Messages = c.Messages
+                    .OrderByDescending(m => m.SentAt)
+                    .Take(1)
+                    .Select(msg => new ResponseMessageDTO
+                    {
+                        Id = msg.Id,
+                        Content = msg.Content,
+                        SenderId = msg.SenderId,
+                        SentAt = msg.SentAt
+                    }).ToList(),
+                Participants = c.Participants.Select(u => new ResponseParticipantDTO
+                {
+                    UserId = u.UserId,
+                    Username = u.User.Name,
+                }).ToList()
+            })
+            .ToListAsync();
+
+    public async Task AddParticipantAsync(Guid conversationId, Guid participantId)
+    {
+        var conversationUser = new ConversationUser
+        {
+            ConversationId = conversationId,
+            UserId = participantId
+        };
+
+        await _context.ConversationUsers.AddAsync(conversationUser);
+        await SaveChangesAsync();
+    }
+
+    public async Task RemoveParticipantAsync(Guid conversationId, Guid participantId)
+    {
+        var participant = await _context.ConversationUsers
+            .FirstOrDefaultAsync(cu => cu.ConversationId == conversationId && cu.UserId == participantId);
+
+        if (participant != null)
+        {
+            _context.ConversationUsers.Remove(participant);
+            await SaveChangesAsync();
+        }
+    }
+
+    public async Task DeleteConversationAsync(Guid conversationId)
+    {
+        var conversation = await _context.Conversations
+            .Include(c => c.Messages)
+            .Include(c => c.Participants)
+            .FirstOrDefaultAsync(c => c.Id == conversationId);
+
+        if (conversation != null)
+        {
+            _context.Messages.RemoveRange(conversation.Messages);
+            _context.ConversationUsers.RemoveRange(conversation.Participants);
+            _context.Conversations.Remove(conversation);
+            await SaveChangesAsync();
+        }
     }
 }
