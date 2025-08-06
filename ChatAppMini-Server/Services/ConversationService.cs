@@ -74,9 +74,9 @@ public class ConversationService : IConversationService
             }
 
             // Add current user to participants if not already included
-            if (!requestConversation.Participants.Any(p => p.UserId == userId))
+            if (!requestConversation.Participants.Any(p => p.Id == userId))
             {
-                requestConversation.Participants.Add(new ConversationUserDTO { UserId = userId.Value });
+                requestConversation.Participants.Add(new UserDTO { Id = userId.Value });
             }
 
             var conversation = await _repo.CreateConversationAsync(requestConversation);

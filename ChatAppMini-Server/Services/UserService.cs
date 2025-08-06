@@ -9,6 +9,7 @@ public interface IUserService
     Task<ServiceResult<List<ResponseUserDto>>> GetUsersAsync();
     Task<ServiceResult<ResponseUserDto>> CreateUserAsync(RequestUserDto user);
     Task<ServiceResult<ResponseUserDto>> GetUsersByIdAsync(Guid id);
+    Task<ServiceResult<ResponseUserDto>> SearchUserByEmailAsync(string email);
     Guid? UserId { get; }
     string? Username { get; }
     string? Email { get; }
@@ -96,5 +97,31 @@ public class UserService : IUserService
         return user != null
             ? ServiceResult<ResponseUserDto>.Success(user)
             : ServiceResult<ResponseUserDto>.Fail("User not found.");
+    }
+
+    public async Task<ServiceResult<ResponseUserDto>> SearchUserByEmailAsync(string email)
+    {
+        if (string.IsNullOrEmpty(email))
+        {
+            return ServiceResult<ResponseUserDto>.Fail("Email cannot be empty.");
+        }
+
+        var user = await _repo.GetUsersByEmailAsync(email);
+
+        if (user == null)
+        {
+            return ServiceResult<ResponseUserDto>.Fail("User not found.");
+        }
+
+        var responseUser = new ResponseUserDto
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email,
+            CreatedAt = user.CreatedAt,
+            UpdatedAt = user.UpdatedAt
+        };
+
+        return ServiceResult<ResponseUserDto>.Success(responseUser);
     }
 }

@@ -13,6 +13,28 @@ public class UsersController : ControllerBase
     private readonly IUserService _userService;
     public UsersController(IUserService userService) => _userService = userService;
 
+    [HttpGet("search")]
+    [Authorize]
+    public async Task<ApiResponse<ResponseUserDto>> SearchUserByEmail([FromQuery] string email)
+    {
+        try
+        {
+            var result = await _userService.SearchUserByEmailAsync(email);
+
+            if (!result.IsSuccess)
+            {
+                return new ApiResponse<ResponseUserDto>(404, result.Message, null);
+            }
+
+            return new ApiResponse<ResponseUserDto>(200, "User found successfully", result.Data);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"Error searching user by email: {ex.Message}", ex);
+            return new ApiResponse<ResponseUserDto>(500, "An error occurred while searching for the user", null);
+        }
+    }
+
     [HttpGet]
     public async Task<ApiResponse<List<ResponseUserDto>>> GetUsers()
     {

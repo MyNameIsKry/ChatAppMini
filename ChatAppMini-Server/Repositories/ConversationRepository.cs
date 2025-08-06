@@ -59,7 +59,7 @@ public class ConversationRepository : IConversationRepository
         var participants = requestConversation.Participants.Select(p => new ConversationUser
         {
             ConversationId = conversation.Id,
-            UserId = p.UserId
+            UserId = p.Id
         }).ToList();
 
         conversation.Participants = participants;
