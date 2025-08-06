@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email format'),
@@ -28,8 +29,11 @@ export function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       const response = await axios.post('http://localhost:5189/api/auth/login', data);
-      console.log('Login successful:', response.data);
-      localStorage.setItem('token', response.data.data.accessToken);
+      Cookies.set('accessToken', response.data.data.accessToken, { 
+        expires: 1/24, 
+        sameSite: 'strict', 
+        path: "/" 
+      });
       router.push('/chat');
     } catch (err: any) {
       setError(err.response?.data?.message || 'An error occurred during login');
