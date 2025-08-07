@@ -5,6 +5,16 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import axios from 'axios';
+import { 
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 
 const registerSchema = z.object({
   email: z.string().email('Invalid email format'),
@@ -22,22 +32,30 @@ export function RegisterForm() {
   const router = useRouter();
   const [error, setError] = useState('');
   
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<RegisterFormData>({
+  const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: '',
+      username: '',
+      password: '',
+      confirmPassword: '',
+    },
   });
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      await axios.post('http://localhost:5189/api/auth/register', {
+      const res = await axios.post('http://localhost:5189/api/auth/register', {
         email: data.email,
         name: data.username,
         password: data.password,
         confirmPassword: data.confirmPassword,
       });
+
+      if (res.data.status === 400) {
+        setError(res.data.message || 'Registration failed');
+        return;
+      }
+
       router.push('/login');
     } catch (err: any) {
       setError(err.response?.data?.message || 'An error occurred during registration');
@@ -49,67 +67,96 @@ export function RegisterForm() {
       <h2 className="text-2xl font-bold text-center">Register</h2>
       {error && <div className="p-3 text-sm text-red-500 bg-red-50 rounded">{error}</div>}
       
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Email</label>
-          <input
-            {...register('email')}
-            type="email"
-            className="w-full px-3 py-2 border rounded-md"
-            placeholder="your@email.com"
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    {...field}
+                    className="w-full"
+                  />
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.email && <span className="text-red-500">{form.formState.errors.email.message}</span>}
+                </FormMessage>
+              </FormItem>
+            )}
           />
-          {errors.email && (
-            <span className="text-sm text-red-500">{errors.email.message}</span>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">Username</label>
-          <input
-            {...register('username')}
-            type="text"
-            className="w-full px-3 py-2 border rounded-md"
-            placeholder="username"
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="Enter your username"
+                    {...field}
+                    className="w-full"
+                  />
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.username && <span className="text-red-500">{form.formState.errors.username.message}</span>}
+                </FormMessage>
+              </FormItem>
+            )}
           />
-          {errors.username && (
-            <span className="text-sm text-red-500">{errors.username.message}</span>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">Password</label>
-          <input
-            {...register('password')}
-            type="password"
-            className="w-full px-3 py-2 border rounded-md"
-            placeholder="******"
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="Enter your password"
+                    {...field}
+                    className="w-full"
+                  />
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.password && <span className="text-red-500">{form.formState.errors.password.message}</span>}
+                </FormMessage>
+              </FormItem>
+            )}
           />
-          {errors.password && (
-            <span className="text-sm text-red-500">{errors.password.message}</span>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">Confirm Password</label>
-          <input
-            {...register('confirmPassword')}
-            type="password"
-            className="w-full px-3 py-2 border rounded-md"
-            placeholder="******"
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="Confirm your password"
+                    {...field}
+                    className="w-full"
+                  />
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.confirmPassword && <span className="text-red-500">{form.formState.errors.confirmPassword.message}</span>}
+                </FormMessage>
+              </FormItem>
+            )}
           />
-          {errors.confirmPassword && (
-            <span className="text-sm text-red-500">{errors.confirmPassword.message}</span>
-          )}
-        </div>
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
-        >
-          {isSubmitting ? 'Registering...' : 'Register'}
-        </button>
-      </form>
+          <InteractiveHoverButton
+            type="submit"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? 'Registering...' : 'Register'}
+          </InteractiveHoverButton>
+        </form>
+      </Form>
     </div>
   );
 }

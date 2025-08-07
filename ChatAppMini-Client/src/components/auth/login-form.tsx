@@ -9,13 +9,11 @@ import Cookies from 'js-cookie';
 import { 
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage
 } from '@/components/ui/form';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 
@@ -53,7 +51,7 @@ export function LoginForm() {
         path: "/" 
       });
       router.push('/chat');
-      
+
     } catch (err: any) {
       setError('An error occurred during login');
     }
