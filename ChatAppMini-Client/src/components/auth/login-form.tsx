@@ -6,6 +6,18 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { 
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email format'),
@@ -18,25 +30,32 @@ export function LoginForm() {
   const router = useRouter();
   const [error, setError] = useState('');
   
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
+  const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
 
   const onSubmit = async (data: LoginFormData) => {
     try {
       const response = await axios.post('http://localhost:5189/api/auth/login', data);
+
+      if (response.data.status === 400) {
+        setError(response.data.message || 'Login failed');
+        return;
+      }
+
       Cookies.set('accessToken', response.data.data.accessToken, { 
         expires: 1/24, 
         sameSite: 'strict', 
         path: "/" 
       });
       router.push('/chat');
+      
     } catch (err: any) {
-      setError(err.response?.data?.message || 'An error occurred during login');
+      setError('An error occurred during login');
     }
   };
 
@@ -45,41 +64,56 @@ export function LoginForm() {
       <h2 className="text-2xl font-bold text-center">Login</h2>
       {error && <div className="p-3 text-sm text-red-500 bg-red-50 rounded">{error}</div>}
       
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Email</label>
-          <input
-            {...register('email')}
-            type="email"
-            className="w-full px-3 py-2 border rounded-md"
-            placeholder="your@email.com"
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input 
+                    {...field}
+                    type="email"
+                    placeholder="Enter your email"
+                    className="w-full"
+                  />
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.email && <span className="text-red-500">{form.formState.errors.email.message}</span>}
+                </FormMessage>
+              </FormItem>
+            )}
           />
-          {errors.email && (
-            <span className="text-sm text-red-500">{errors.email.message}</span>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">Password</label>
-          <input
-            {...register('password')}
-            type="password"
-            className="w-full px-3 py-2 border rounded-md"
-            placeholder="******"
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input 
+                    {...field}
+                    type="password"
+                    placeholder="Enter your password"
+                    className="w-full"
+                  />
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.password && <span className="text-red-500">{form.formState.errors.password.message}</span>}
+                </FormMessage>
+              </FormItem>
+            )}
           />
-          {errors.password && (
-            <span className="text-sm text-red-500">{errors.password.message}</span>
-          )}
-        </div>
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
-        >
-          {isSubmitting ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
+          <InteractiveHoverButton
+            type="submit"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? 'Logging in...' : 'Login'}
+          </InteractiveHoverButton>
+        </form>
+      </Form>
     </div>
   );
 }
