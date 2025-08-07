@@ -9,6 +9,7 @@ export default function RegisterPage() {
         <TypingAnimation 
           className="text-3xl font-bold text-gray-800"
           as="h1"
+          duration={50}
         >
             CHAT APP MINI
         </TypingAnimation>
