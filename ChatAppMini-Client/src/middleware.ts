@@ -8,7 +8,6 @@ interface JwtPayload {
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('accessToken')?.value;
-console.log('Token:', token);
 
   if (!token) {
      return NextResponse.redirect(new URL('/login', request.url));
