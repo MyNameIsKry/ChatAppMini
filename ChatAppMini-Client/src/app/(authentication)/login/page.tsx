@@ -1,10 +1,11 @@
+"use client"
 import { LoginForm } from '@/components/auth/login-form';
 import Link from 'next/link';
 import { TypingAnimation } from '@/components/magicui/typing-animation';
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col px-4">
+    <div className="min-h-screen flex flex-col px-4">
       <div className="pt-8 text-center">
         <TypingAnimation 
           className="text-3xl font-bold text-gray-800"
