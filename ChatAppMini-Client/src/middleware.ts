@@ -7,10 +7,21 @@ interface JwtPayload {
 }
 
 export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  const publicPaths = ['/', '/login', '/register', '/favicon.ico'];
+  if (
+    publicPaths.includes(pathname) ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api/public')
+  ) {
+    return NextResponse.next();
+  }
+
   const token = request.cookies.get('accessToken')?.value;
 
   if (!token) {
-     return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   try {
@@ -18,17 +29,11 @@ export function middleware(request: NextRequest) {
     const currentTime = Math.floor(Date.now() / 1000);
 
     if (decoded.exp < currentTime) {
-       return NextResponse.redirect(new URL('/login', request.url));
+      return NextResponse.redirect(new URL('/login', request.url));
     }
   } catch (error) {
-     return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   return NextResponse.next();
 }
-
-export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|login|register|api/public).*)',
-  ],
-};
