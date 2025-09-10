@@ -54,10 +54,10 @@ export default function Home() {
           </div>
           <div className="space-x-4">
             <Link href="/login">
-              <Button variant="outline">Đăng nhập</Button>
+              <Button variant="outline" className="cursor-pointer">Đăng nhập</Button>
             </Link>
             <Link href="/register">
-              <Button>Đăng ký</Button>
+              <Button className="cursor-pointer">Đăng ký</Button>
             </Link>
           </div>
         </nav>
