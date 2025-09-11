@@ -1,5 +1,6 @@
 using Utils;
 using ChatAppMini.DTOs.Auth;
+using Azure;
 
 public interface IAuthService
 {
@@ -9,10 +10,12 @@ public interface IAuthService
 public class AuthService : IAuthService
 {
     private readonly IUserRepository _repo;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AuthService(IUserRepository repo)
+    public AuthService(IUserRepository repo, IHttpContextAccessor httpContextAccessor)
     {
         _repo = repo;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<ServiceResult<ResponseLoginDto>> LoginAsync(RequestLoginDto user)
@@ -48,6 +51,24 @@ public class AuthService : IAuthService
             CreatedAt = existingUser.CreatedAt,
             UpdatedAt = existingUser.UpdatedAt
         };
+
+        var CookiesOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Expires = DateTime.UtcNow.AddDays(7),
+            SameSite = SameSiteMode.None,
+            Secure = true
+        };
+
+        try
+        {
+            _httpContextAccessor.HttpContext?.Response.Cookies.Append("accessToken", accessToken, CookiesOptions);
+            _httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", refreshToken, CookiesOptions);
+        }
+        catch (Exception ex)
+        {
+            return ServiceResult<ResponseLoginDto>.Fail($"An error occurred while setting cookies: {ex.Message}");
+        }
 
         return ServiceResult<ResponseLoginDto>.Success(responseLogin);
     }
