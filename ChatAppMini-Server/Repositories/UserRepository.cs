@@ -28,6 +28,7 @@ class UserRepository : IUserRepository
                 Id = u.Id,
                 Name = u.Name,
                 Email = u.Email,
+                AvatarUrl = u.AvatarUrl,
                 CreatedAt = u.CreatedAt,
                 UpdatedAt = u.UpdatedAt
             })
@@ -57,6 +58,7 @@ class UserRepository : IUserRepository
                 Id = u.Id,
                 Name = u.Name,
                 Email = u.Email,
+                AvatarUrl = u.AvatarUrl,
                 CreatedAt = u.CreatedAt,
                 UpdatedAt = u.UpdatedAt
             })
@@ -76,6 +78,7 @@ class UserRepository : IUserRepository
                 Name = u.Name,
                 Email = u.Email,
                 Password = u.Password,
+                AvatarUrl = u.AvatarUrl,
                 CreatedAt = u.CreatedAt,
                 UpdatedAt = u.UpdatedAt
             })
