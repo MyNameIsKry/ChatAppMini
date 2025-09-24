@@ -56,7 +56,7 @@ export default function LoginPage() {
           updatedAt: response.data.updatedAt,
         };
         
-        login(userData, response.data.accessToken, response.data.refreshToken);
+        login(userData);
         toast.success('Đăng nhập thành công!');
         //router.push('/chat');
       } else {

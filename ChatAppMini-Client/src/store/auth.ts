@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  login: (user: User, accessToken: string, refreshToken: string) => void;
+  login: (user: User) => void;
   logout: () => void;
   updateUser: (user: User) => void;
 }
@@ -16,9 +16,7 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       user: null,
       isAuthenticated: false,
-      login: (user: User, accessToken: string, refreshToken: string) => {
-        Cookies.set('accessToken', accessToken, { expires: 1 }); // 1 day
-        Cookies.set('refreshToken', refreshToken, { expires: 7 }); // 7 days
+      login: (user: User) => {
         set({ user, isAuthenticated: true });
       },
       logout: () => {
