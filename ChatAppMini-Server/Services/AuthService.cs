@@ -46,6 +46,7 @@ public class AuthService : IAuthService
             Id = existingUser.Id,
             Name = existingUser.Name,
             Email = existingUser.Email,
+            AvatarUrl = existingUser.AvatarUrl,
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             CreatedAt = existingUser.CreatedAt,

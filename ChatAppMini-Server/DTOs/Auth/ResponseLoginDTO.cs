@@ -12,6 +12,7 @@ public class ResponseLoginDto
     public string AccessToken { get; set; } = null!;
 
     public string RefreshToken { get; set; } = null!;
+    public string AvatarUrl { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; }
 

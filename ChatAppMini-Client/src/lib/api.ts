@@ -16,6 +16,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true
 });
 
 // Request interceptor to add auth token
@@ -52,6 +53,7 @@ api.interceptors.response.use(
 export const authAPI = {
   login: async (data: LoginRequest): Promise<ApiResponse<LoginResponse>> => {
     const response: AxiosResponse<ApiResponse<LoginResponse>> = await api.post('/auth/login', data);
+    console.log(response.data);
     return response.data;
   },
 
