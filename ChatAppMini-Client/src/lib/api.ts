@@ -10,7 +10,6 @@ import {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:5189/api';
 
-// Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -19,7 +18,6 @@ const api = axios.create({
   withCredentials: true
 });
 
-// Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
     const token = Cookies.get('accessToken');
@@ -33,27 +31,18 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle token expiration
 api.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      // Token expired or invalid
-      Cookies.remove('accessToken');
-      Cookies.remove('refreshToken');
-      window.location.href = '/login';
-    }
     return Promise.reject(error);
   }
 );
 
-// Auth API
 export const authAPI = {
   login: async (data: LoginRequest): Promise<ApiResponse<LoginResponse>> => {
     const response: AxiosResponse<ApiResponse<LoginResponse>> = await api.post('/auth/login', data);
-    console.log(response.data);
     return response.data;
   },
 
@@ -63,7 +52,6 @@ export const authAPI = {
   },
 };
 
-// User API
 export const userAPI = {
   searchByEmail: async (email: string): Promise<ApiResponse<User>> => {
     const response: AxiosResponse<ApiResponse<User>> = await api.get(`/users/search?email=${email}`);

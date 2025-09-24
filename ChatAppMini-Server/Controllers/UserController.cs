@@ -74,7 +74,6 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("@me")]
-    [Authorize]
     public async Task<ApiResponse<ResponseUserDto>> GetUserInfo()
     {
         try

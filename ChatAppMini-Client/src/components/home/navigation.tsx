@@ -4,11 +4,10 @@ import { MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react'
 import { Button } from '../ui/button';
-import { useAuthStore } from '@/store/auth';
+import Image from 'next/image';
+import { User } from '@/types/api';
 
-export const Navigation = () => {
-    const { logout, isAuthenticated, user } = useAuthStore((state) => state);
-    
+export const Navigation = ({ userData }: { userData: User | null }) => {
   return (
     <nav className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
@@ -16,8 +15,12 @@ export const Navigation = () => {
             <span className="text-2xl font-bold text-gray-900">ChatMini</span>
         </div>
         <div className="space-x-4">
-            { isAuthenticated ? (
-                <Button variant="ghost" onClick={logout} className="cursor-pointer">Đăng xuất</Button>
+            { userData ? (
+                <>
+                    <Image src={userData.avatarUrl} alt={userData.name} className="h-8 w-8 rounded-full" width={32} height={32} />
+                    <span>{userData.name}</span>
+                    <Button variant="ghost" className="cursor-pointer">Đăng xuất</Button>
+                </>
             ) : (
                 <>
                     <Link href="/login">

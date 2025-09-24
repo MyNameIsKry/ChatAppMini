@@ -4,12 +4,23 @@ import { MessageCircle } from "lucide-react";
 import UserReview from "@/components/home/userReview";
 import { Navigation } from "@/components/home/navigation";
 import Feature from "@/components/home/feature";
+import axios from "axios";
+import { cookies } from "next/headers";
 
-export default function Home() {
+export default async function Home() {
+  const userData = await axios.get("http://localhost:5189/api/users/@me", {
+    headers: {
+      Authorization: `Bearer ${(await cookies()).get("accessToken")?.value}`,
+    },
+    withCredentials: true
+  });
+
+  console.log(userData.data.data)
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <header className="container mx-auto px-4 py-6">
-        <Navigation />
+        <Navigation userData={userData.data.data} />
       </header>
 
       <main className="pt-16">
