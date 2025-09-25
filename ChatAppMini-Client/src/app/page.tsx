@@ -15,12 +15,12 @@ export default async function Home() {
     withCredentials: true
   });
 
-  console.log(userData.data.data)
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <header className="container mx-auto px-4 py-6">
-        <Navigation userData={userData.data.data} />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <header className="sticky top-0 z-50 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-4">
+          <Navigation userData={userData.data.data} />
+        </div>
       </header>
 
       <main className="pt-16">
