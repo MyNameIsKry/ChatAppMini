@@ -12,8 +12,17 @@ export const Navigation = ({ userData }: { userData: User | null }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
-    <nav className="backdrop-blur-md bg-white/80 border border-white/20 rounded-2xl px-6 py-4 shadow-lg shadow-blue-">
-      <div className="flex items-center justify-between">
+    <>
+      {/* Full screen backdrop */}
+      {isDropdownOpen && (
+        <div 
+          className="fixed inset-0 z-40 min-h-screen" 
+          onClick={() => setIsDropdownOpen(false)}
+        />
+      )}
+      
+      <nav className="backdrop-blur-md bg-white/80 border border-white/20 rounded-2xl px-6 py-4 shadow-lg shadow-blue-500/10 relative z-50">
+        <div className="flex items-center justify-between">
         <Link href="/" className="flex items-center space-x-3 group">
           <div className="relative">
             <MessageCircle className="h-8 w-8 text-blue-600 transition-transform group-hover:scale-110 group-hover:rotate-12" />
@@ -47,19 +56,13 @@ export const Navigation = ({ userData }: { userData: User | null }) => {
 
               <AnimatePresence>
                 {isDropdownOpen && (
-                  <>
-                    {/* Backdrop to close dropdown when clicking outside */}
-                    <div 
-                      className="fixed inset-0 z-40" 
-                      onClick={() => setIsDropdownOpen(false)}
-                    />
-                    <motion.div
-                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-2 w-48 backdrop-blur-md bg-white/90 border border-white/20 rounded-xl shadow-xl py-2 z-50"
-                    >
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-2 w-48 backdrop-blur-md bg-white/90 border border-white/20 rounded-xl shadow-xl py-2 z-50"
+                  >
                     <div className="px-4 py-2 border-b border-gray-100">
                       <p className="font-medium text-gray-800">{userData.name}</p>
                       <p className="text-sm text-gray-500">{userData.email}</p>
@@ -82,7 +85,6 @@ export const Navigation = ({ userData }: { userData: User | null }) => {
                       <span>Đăng xuất</span>
                     </button>
                   </motion.div>
-                  </>
                 )}
               </AnimatePresence>
             </div>
@@ -104,7 +106,8 @@ export const Navigation = ({ userData }: { userData: User | null }) => {
             </div>
           )}
         </div>
-      </div>
-    </nav>
+        </div>
+      </nav>
+    </>
   )
 }
