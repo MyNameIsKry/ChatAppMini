@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ChatAppMini - Client
 
-## Getting Started
+Ứng dụng chat realtime được xây dựng với Next.js 15, TypeScript, và SignalR.
 
-First, run the development server:
+## Tính năng
+
+- 🔐 **Xác thực người dùng**: Đăng ký, đăng nhập với JWT
+- 💬 **Chat realtime**: Sử dụng SignalR để nhắn tin thời gian thực
+- 👥 **Chat nhóm**: Tạo và tham gia các cuộc trò chuyện nhóm
+- 🔍 **Tìm kiếm người dùng**: Tìm và thêm bạn bè vào cuộc trò chuyện
+- 📱 **Giao diện responsive**: Tối ưu cho cả desktop và mobile
+- 🎨 **UI hiện đại**: Sử dụng Tailwind CSS và shadcn/ui
+
+## Công nghệ sử dụng
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **UI Components**: shadcn/ui, Tailwind CSS
+- **State Management**: Zustand
+- **Form Handling**: React Hook Form + Zod
+- **HTTP Client**: Axios
+- **Real-time**: SignalR
+- **Notifications**: Sonner
+
+## Cài đặt
+
+1. Clone repository
+2. Cài đặt dependencies:
+```bash
+npm install
+```
+
+3. Tạo file `.env.local`:
+```env
+NEXT_PUBLIC_API_URL=https://localhost:7189/api
+NEXT_PUBLIC_SIGNALR_URL=https://localhost:7189/chatHub
+```
+
+4. Chạy ứng dụng:
+```bash
+npm run dev
+```
+
+## Cấu trúc thư mục
+
+```
+src/
+├── app/                    # App Router pages
+│   ├── (main)/            # Protected routes
+│   ├── chat/              # Chat page
+│   ├── login/             # Login page
+│   ├── register/          # Register page
+│   └── page.tsx           # Home page
+├── components/            # React components
+│   ├── ui/                # shadcn/ui components
+│   └── providers/         # Context providers
+├── hooks/                 # Custom hooks
+├── lib/                   # Utilities and API
+├── store/                 # Zustand stores
+└── types/                 # TypeScript types
+```
+
+## Tính năng chính
+
+### 1. Landing Page (/)
+- Trang chủ giới thiệu ứng dụng
+- Có thể truy cập bởi tất cả người dùng
+- Liên kết đến trang đăng nhập/đăng ký
+
+### 2. Authentication (/login, /register)
+- Form đăng nhập và đăng ký với validation
+- Tự động redirect nếu đã đăng nhập
+- Lưu token vào cookies
+
+### 3. Chat Page (/chat)
+- Danh sách cuộc trò chuyện
+- Tìm kiếm và thêm người dùng mới
+- Chat realtime với SignalR
+- Hiển thị tin nhắn theo thời gian thực
+
+### 4. Profile Page (/profile)
+- Xem và chỉnh sửa thông tin cá nhân
+- Đăng xuất
+- Quản lý tài khoản
+
+## Chạy ứng dụng
 
 ```bash
 npm run dev
-# or
+# hoặc
 yarn dev
-# or
+# hoặc
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Mở [http://localhost:3000](http://localhost:3000) để xem ứng dụng.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Build ứng dụng:
+```bash
+npm run build
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. Start production server:
+```bash
+npm start
+```
