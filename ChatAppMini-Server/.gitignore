@@ -3,6 +3,8 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+appsettings.json
+
 /net8.0
 # dotenv files
 .env
