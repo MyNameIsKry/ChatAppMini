@@ -65,20 +65,24 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center space-x-2">
-            <MessageCircle className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">ChatMini</span>
+          <Link href="/" className="inline-flex items-center space-x-3 group">
+            <div className="relative">
+              <MessageCircle className="h-10 w-10 text-blue-600 transition-transform group-hover:scale-110 group-hover:rotate-12" />
+              <div className="absolute -inset-1 bg-blue-600/20 rounded-full blur opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+            <span className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              ChatMini
+            </span>
           </Link>
         </div>
 
-        <Card>
+        <Card className="backdrop-blur-md bg-white/90 border border-white/20 shadow-xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Đăng ký</CardTitle>
-            <CardDescription className="text-center">
+            <CardTitle className="text-2xl text-center bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Đăng ký</CardTitle>
+            <CardDescription className="text-center text-gray-600">
               Tạo tài khoản mới để bắt đầu trò chuyện với bạn bè
             </CardDescription>
           </CardHeader>
@@ -176,20 +180,24 @@ export default function RegisterPage() {
                 )}
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button 
+                type="submit" 
+                className="cursor-pointer w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]" 
+                disabled={isLoading}
+              >
                 {isLoading ? 'Đang tạo tài khoản...' : 'Đăng ký'}
               </Button>
             </form>
 
             <div className="mt-6 text-center text-sm">
               <span className="text-gray-600">Đã có tài khoản? </span>
-              <Link href="/login" className="text-blue-600 hover:underline font-medium">
+              <Link href="/login" className="text-blue-600 hover:text-indigo-600 font-medium transition-colors duration-200 hover:underline">
                 Đăng nhập ngay
               </Link>
             </div>
 
             <div className="mt-4 text-center">
-              <Link href="/" className="text-sm text-gray-600 hover:underline">
+              <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 transition-colors duration-200 hover:underline">
                 ← Quay lại trang chủ
               </Link>
             </div>
