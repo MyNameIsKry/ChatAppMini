@@ -5,6 +5,7 @@ using Azure;
 public interface IAuthService
 {
     Task<ServiceResult<ResponseLoginDto>> LoginAsync(RequestLoginDto user);
+    ServiceResult<string> Logout();
 }
 
 public class AuthService : IAuthService
@@ -72,5 +73,29 @@ public class AuthService : IAuthService
         }
 
         return ServiceResult<ResponseLoginDto>.Success(responseLogin);
+    }
+
+    public ServiceResult<string> Logout()
+    {
+        try
+        {
+            var CookiesOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(-1),
+                SameSite = SameSiteMode.None,
+                Secure = true
+            };
+
+            _httpContextAccessor.HttpContext?.Response.Cookies.Append("accessToken", "", CookiesOptions);
+            _httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", "", CookiesOptions);
+
+            return ServiceResult<string>.Success("User logged out successfully.");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError("An error occurred while logging out.", ex);
+            return ServiceResult<string>.Fail($"An error occurred while logging out");
+        }
     }
 }

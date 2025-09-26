@@ -63,4 +63,25 @@ public class AuthController : ControllerBase
             return new ApiResponse<ResponseLoginDto>(500, "An error occurred while logging in.", null);
         }
     }
+
+    [HttpPost("logout")]
+    public ApiResponse<string> Logout()
+    {
+        try
+        {
+            ServiceResult<string> logoutResult = _authService.Logout();
+
+            if (!logoutResult.IsSuccess)
+            {
+                return new ApiResponse<string>(400, logoutResult.Message, null);
+            }
+
+            return new ApiResponse<string>(200, "User logged out successfully.", logoutResult.Data);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError("An error occurred while logging out.", ex);
+            return new ApiResponse<string>(500, "An error occurred while logging out.", null);
+        }
+    }
 }
