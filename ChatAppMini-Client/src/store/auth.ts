@@ -7,7 +7,6 @@ interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   login: (user: User) => void;
-  logout: () => void;
   updateUser: (user: User) => void;
 }
 
@@ -18,11 +17,6 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       login: (user: User) => {
         set({ user, isAuthenticated: true });
-      },
-      logout: () => {
-        Cookies.remove('accessToken');
-        Cookies.remove('refreshToken');
-        set({ user: null, isAuthenticated: false });
       },
       updateUser: (user: User) => {
         set({ user });
