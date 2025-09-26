@@ -50,6 +50,11 @@ export const authAPI = {
     const response: AxiosResponse<ApiResponse<User>> = await api.post('/auth/register', data);
     return response.data;
   },
+
+  logout : async (): Promise<ApiResponse<string>> => {
+    const response: AxiosResponse<ApiResponse<string>> = await api.post('/auth/logout');
+    return response.data;
+  }
 };
 
 export const userAPI = {
