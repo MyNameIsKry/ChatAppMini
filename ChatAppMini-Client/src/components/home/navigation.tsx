@@ -13,7 +13,6 @@ export const Navigation = ({ userData }: { userData: User | null }) => {
 
   return (
     <>
-      {/* Full screen backdrop */}
       {isDropdownOpen && (
         <div 
           className="fixed inset-0 z-40 min-h-screen" 
